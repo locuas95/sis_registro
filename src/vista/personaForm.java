@@ -19,6 +19,8 @@ public class personaForm extends javax.swing.JInternalFrame {
    List<personaDTO> lista = new ArrayList<>();    
     public personaForm() {
         initComponents();
+        limpiar();
+        listar();
     }
 
     @SuppressWarnings("unchecked")
@@ -41,8 +43,10 @@ public class personaForm extends javax.swing.JInternalFrame {
         tbpersona = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnCortar = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
+
+        setClosable(true);
 
         jLabel1.setText("NOMBRE:");
 
@@ -67,17 +71,25 @@ public class personaForm extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "ID", "NOMBRE", "APELLIDO", "DNI", "DIRECCION", "FN", "TELEFONO"
+                "N°", "ID", "NOMBRE", "APELLIDO", "DIRECCION", "TELEFONO", "DNI"
             }
         ));
         jScrollPane1.setViewportView(tbpersona);
+        if (tbpersona.getColumnModel().getColumnCount() > 0) {
+            tbpersona.getColumnModel().getColumn(0).setMaxWidth(30);
+        }
 
         jButton1.setText("NUEVO");
 
         jButton2.setText("UPDATE");
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/delete icon.png"))); // NOI18N
-        jButton3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Cortar", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
+        btnCortar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/delete icon.png"))); // NOI18N
+        btnCortar.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Cortar", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
+        btnCortar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCortarActionPerformed(evt);
+            }
+        });
 
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/create icono.png"))); // NOI18N
         btnGuardar.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Guardar", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
@@ -112,10 +124,10 @@ public class personaForm extends javax.swing.JInternalFrame {
                                 .addComponent(jLabel4)
                                 .addGap(18, 18, 18)
                                 .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnCortar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(22, 22, 22))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -158,7 +170,7 @@ public class personaForm extends javax.swing.JInternalFrame {
                             .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(20, 20, 20)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnCortar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel3)
                                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))))
@@ -172,7 +184,7 @@ public class personaForm extends javax.swing.JInternalFrame {
                     .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27))
         );
@@ -197,17 +209,32 @@ public class personaForm extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(rootPane, "No se ha guardado ! ! !");
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnCortarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCortarActionPerformed
+        // TODO add your handling code here:
+        int fila = tbpersona.getSelectedRow();
+        
+        Object oelim = Integer.parseInt(tbpersona.getValueAt(fila, 1).toString());
+        if (amO.delete(oelim)>0) {
+            JOptionPane.showMessageDialog(this, "se ha eliminado correctamente");
+            limpiar();
+            listar();
+        }else{
+            JOptionPane.showMessageDialog(this, "error al eliminar!!");
+        }
+                                  
+    }//GEN-LAST:event_btnCortarActionPerformed
 public void listar(){ 
     
     model = (DefaultTableModel) tbpersona.getModel();
     lista = amO.readAll();
-    Object datos[]= new Object[4];
+    Object datos[]= new Object[7];
     for (int i=0; i<lista.size();i++){
-        //datos[0]=i+1;
-        datos[0]=lista.get(i).getIdpersona();
-        datos[1]=lista.get(i).getNombre();
-        datos[2]=lista.get(i).getApellido();
-        datos[3]=lista.get(i).getDireccion();
+        datos[0]=i+1;
+        datos[1]=lista.get(i).getIdpersona();
+        datos[2]=lista.get(i).getNombre();
+        datos[3]=lista.get(i).getApellido();
+        datos[4]=lista.get(i).getDireccion();
         datos[5]=lista.get(i).getTelefono();
         datos[6]=lista.get(i).getDni();
         
@@ -225,10 +252,10 @@ public void limpiar()
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCortar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

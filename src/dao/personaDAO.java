@@ -23,7 +23,7 @@ public class personaDAO implements Operaciones<personaDTO>{
     
     private final String sql_create="INSERT INTO bd_registrop.persona(idpersona,nombre,apellido,direccion,telefono,dni)VALUES (NULL ,?,?,?,?,?);";
     private final String sql_update="UPDATE bd_registrop.persona SET nombre=?,apellido=?,direccion=?, telefono=?,dni=? WHERE persona.idpersona=?";
-    private final String sql_delete="";
+    private final String sql_delete="DELETE FROM persona WHERE idpersona=?";
     private final String sql_read="";
     private final String sql_readAll="SELECT *FROM persona";
     private final String sql_search="";
@@ -72,7 +72,18 @@ public class personaDAO implements Operaciones<personaDTO>{
 
     @Override
     public int delete(Object key) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int op = 0;        
+        try {
+            cx = conexion.getConexion();
+            ps = cx.prepareStatement(sql_delete);
+            ps.setObject(1, key);
+           op = ps.executeUpdate();                    
+        } catch (Exception x) {
+            JOptionPane.showMessageDialog(null, "User: "+x);
+        } finally{
+           conexion.cerrar();
+        }
+        return op; 
     }
 
     @Override
