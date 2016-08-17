@@ -1,13 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package dao;
 
 import dto.personaDTO;
 import interfaces.Operaciones;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -15,7 +13,7 @@ import java.util.List;
  */
 public class personaDAO implements Operaciones<personaDTO>{
     
-    private final String sql_create="INSERT INTO  bd_registrop.persona(idpersona,nombre,apellido,direccion,telefono,dni)VALUES (NULL ,?,?,?,?,?);";
+    private final String sql_create="INSERT INTO bd_registrop.persona(idpersona,nombre,apellido,direccion,telefono,dni)VALUES (NULL ,?,?,?,?,?);";
     private final String sql_update="";
     private final String sql_delete="";
     private final String sql_read="";
@@ -25,7 +23,22 @@ public class personaDAO implements Operaciones<personaDTO>{
 
     @Override
     public int create(personaDTO e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         int op = 0;        
+        try {
+            cx = Conexion.getConexion();
+            ps = cx.prepareStatement(sql_create);
+            ps.setString(1, e.getNombre());
+            ps.setString(2, e.getApellido());
+            ps.setString(3, e.getDireccion());    
+            ps.setString(4, e.getTelefono());
+            ps.setString(5, e.getDni());
+           op = ps.executeUpdate();                    
+        } catch (Exception x) {
+            JOptionPane.showMessageDialog(null, "createproducto"+x);
+        } finally{
+           Conexion.cerrar();
+        }
+        return op;
     }
 
     @Override
@@ -45,7 +58,28 @@ public class personaDAO implements Operaciones<personaDTO>{
 
     @Override
     public List<personaDTO> readAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<personaDTO> lista = new ArrayList<>();
+         try {
+            cx = Conexion.getConexion();
+            ps = cx.prepareStatement(sql_readAll);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                personaDTO dTO = new personaDTO();
+                dTO.setIdpersona(rs.getInt("idpersona"));
+                dTO.setNombre(rs.getString("nombre"));
+                dTO.setApellido(rs.getString("apellido"));
+                dTO.setDireccion(rs.getString("direccion"));
+                dTO.setTelefono(rs.getString("telefono"));
+                dTO.setDni(rs.getString("dni"));
+                lista.add(dTO);
+            }
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "User: "+e);
+        }finally{
+            Conexion.cerrar();
+        }
+        return lista;
     }
 
     @Override
