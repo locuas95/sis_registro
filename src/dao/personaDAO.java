@@ -3,9 +3,13 @@ package dao;
 
 import dto.personaDTO;
 import interfaces.Operaciones;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import util.conexion;
 
 /**
  *
@@ -13,11 +17,15 @@ import javax.swing.JOptionPane;
  */
 public class personaDAO implements Operaciones<personaDTO>{
     
+    private static Connection cx;
+    private static ResultSet rs;
+    private static PreparedStatement ps;
+    
     private final String sql_create="INSERT INTO bd_registrop.persona(idpersona,nombre,apellido,direccion,telefono,dni)VALUES (NULL ,?,?,?,?,?);";
     private final String sql_update="";
     private final String sql_delete="";
     private final String sql_read="";
-    private final String sql_readAll="";
+    private final String sql_readAll="SELECT *FROM persona";
     private final String sql_search="";
     
 
@@ -25,7 +33,7 @@ public class personaDAO implements Operaciones<personaDTO>{
     public int create(personaDTO e) {
          int op = 0;        
         try {
-            cx = Conexion.getConexion();
+            cx = conexion.getConexion();
             ps = cx.prepareStatement(sql_create);
             ps.setString(1, e.getNombre());
             ps.setString(2, e.getApellido());
@@ -36,7 +44,7 @@ public class personaDAO implements Operaciones<personaDTO>{
         } catch (Exception x) {
             JOptionPane.showMessageDialog(null, "createproducto"+x);
         } finally{
-           Conexion.cerrar();
+           conexion.cerrar();
         }
         return op;
     }
@@ -60,7 +68,7 @@ public class personaDAO implements Operaciones<personaDTO>{
     public List<personaDTO> readAll() {
         List<personaDTO> lista = new ArrayList<>();
          try {
-            cx = Conexion.getConexion();
+            cx = conexion.getConexion();
             ps = cx.prepareStatement(sql_readAll);
             rs = ps.executeQuery();
             while(rs.next()){
@@ -77,7 +85,7 @@ public class personaDAO implements Operaciones<personaDTO>{
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "User: "+e);
         }finally{
-            Conexion.cerrar();
+            conexion.cerrar();
         }
         return lista;
     }
@@ -86,6 +94,5 @@ public class personaDAO implements Operaciones<personaDTO>{
     public boolean search(String e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
     
 }
